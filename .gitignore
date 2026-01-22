@@ -1,0 +1,57 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules/
+
+# next.js
+/.next/
+/out/
+
+# production
+/build/
+dist/
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files
+.env
+.env.*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
+
+# Dependency lock files
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Public outputs
+public/
+
+# Ignore backend dependencies
+backend/node_modules/
+backend/dist/
+backend/build/
+
+# Ignore local dev files
+*.local.js
+*.local.ts
