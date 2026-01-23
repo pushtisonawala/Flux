@@ -25,4 +25,5 @@ const executionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Execution", executionSchema);
+const Execution = mongoose.model("Execution", executionSchema);
+export default Execution;

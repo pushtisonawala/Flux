@@ -7,6 +7,12 @@ const requestSchema = new mongoose.Schema(
       required: true,
       index: true
     },
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true
+    },
     folder_name: {
       type: String
     },

@@ -4,7 +4,8 @@ import {Server} from "socket.io"
 import {connectDB} from "./db/mongo.js"
 import {createWorkspace} from "./controllers/workspaceControllers.js"
 import {signup, login} from "./controllers/userController.js";
-import {getReq,createReq} from "./controllers/requestController.js"
+import {getReq,createReq} from "./controllers/requestController.js";
+import {Executions} from "./controllers/ExecutionController.js"
 const app=express()
 const httpServer=http.createServer(app)
 app.use(express.json());
@@ -27,6 +28,16 @@ app.post("/api/requests/:workspace_id", createReq);
 app.get("/api/requests/:workspace_id", getReq);
 
 
+// Test API endpoint for internal testing
+app.get("/api/test-echo", (req, res) => {
+    res.json({
+        message: "Test API is working!",
+        echo: req.query || {},
+        time: new Date().toISOString()
+    });
+});
+
+app.get("/api/:requestId/execution",Executions)
 
 
     httpServer.listen(4000,()=>{
