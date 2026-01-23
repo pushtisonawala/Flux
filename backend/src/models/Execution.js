@@ -18,6 +18,11 @@ const executionSchema = new mongoose.Schema(
     status_code: {
       type: Number
     },
+    state: {
+      type: String,
+      enum: ["PENDING", "RUNNING", "SUCCESS", "FAILED"],
+      default: "PENDING"
+    },
     latency_ms: {
       type: Number
     }

@@ -28,7 +28,6 @@ app.post("/api/requests/:workspace_id", createReq);
 app.get("/api/requests/:workspace_id", getReq);
 
 
-// Test API endpoint for internal testing
 app.get("/api/test-echo", (req, res) => {
     res.json({
         message: "Test API is working!",
