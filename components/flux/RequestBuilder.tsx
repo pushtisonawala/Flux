@@ -158,13 +158,66 @@ export function RequestBuilder({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-foreground">Query Parameters</h3>
-                <Button size="sm" variant="outline" className="h-8 gap-1 border-border bg-transparent">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-8 gap-1 border-border bg-transparent"
+                  onClick={() => {
+                    const newKey = `param${Object.keys(requestConfig.params).length + 1}`;
+                    setRequestConfig({
+                      ...requestConfig,
+                      params: { ...requestConfig.params, [newKey]: '' }
+                    });
+                  }}
+                >
                   <Plus className="h-3.5 w-3.5" />
                   Add
                 </Button>
               </div>
-              <div className="bg-card border border-border rounded-lg p-3 text-xs text-foreground/60">
-                No parameters added
+              <div className="space-y-2">
+                {Object.entries(requestConfig.params).map(([key, value]) => (
+                  <div key={key} className="flex gap-2 items-center">
+                    <Input
+                      placeholder="Key"
+                      value={key}
+                      onChange={(e) => {
+                        const newParams = { ...requestConfig.params };
+                        delete newParams[key];
+                        newParams[e.target.value] = value;
+                        setRequestConfig({ ...requestConfig, params: newParams });
+                      }}
+                      className="w-32 bg-card border-border text-foreground text-xs"
+                    />
+                    <Input
+                      placeholder="Value"
+                      value={value}
+                      onChange={(e) => {
+                        setRequestConfig({
+                          ...requestConfig,
+                          params: { ...requestConfig.params, [key]: e.target.value }
+                        });
+                      }}
+                      className="flex-1 bg-card border-border text-foreground text-xs"
+                    />
+                    <Button 
+                      size="icon" 
+                      variant="ghost" 
+                      className="h-8 w-8 text-foreground/60 hover:text-foreground"
+                      onClick={() => {
+                        const newParams = { ...requestConfig.params };
+                        delete newParams[key];
+                        setRequestConfig({ ...requestConfig, params: newParams });
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                {Object.keys(requestConfig.params).length === 0 && (
+                  <div className="bg-card border border-border rounded-lg p-3 text-xs text-foreground/60">
+                    No parameters added
+                  </div>
+                )}
               </div>
             </div>
           </TabsContent>
@@ -218,7 +271,18 @@ export function RequestBuilder({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-foreground">Headers</h3>
-                <Button size="sm" variant="outline" className="h-8 gap-1 border-border bg-transparent">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="h-8 gap-1 border-border bg-transparent"
+                  onClick={() => {
+                    const newKey = `Header-${Object.keys(requestConfig.headers).length + 1}`;
+                    setRequestConfig({
+                      ...requestConfig,
+                      headers: { ...requestConfig.headers, [newKey]: '' }
+                    });
+                  }}
+                >
                   <Plus className="h-3.5 w-3.5" />
                   Add
                 </Button>
@@ -229,15 +293,35 @@ export function RequestBuilder({
                     <Input
                       placeholder="Key"
                       value={key}
-                      readOnly
+                      onChange={(e) => {
+                        const newHeaders = { ...requestConfig.headers };
+                        delete newHeaders[key];
+                        newHeaders[e.target.value] = value;
+                        setRequestConfig({ ...requestConfig, headers: newHeaders });
+                      }}
                       className="w-32 bg-card border-border text-foreground text-xs"
                     />
                     <Input
                       placeholder="Value"
                       value={value}
+                      onChange={(e) => {
+                        setRequestConfig({
+                          ...requestConfig,
+                          headers: { ...requestConfig.headers, [key]: e.target.value }
+                        });
+                      }}
                       className="flex-1 bg-card border-border text-foreground text-xs"
                     />
-                    <Button size="icon" variant="ghost" className="h-8 w-8 text-foreground/60 hover:text-foreground">
+                    <Button 
+                      size="icon" 
+                      variant="ghost" 
+                      className="h-8 w-8 text-foreground/60 hover:text-foreground"
+                      onClick={() => {
+                        const newHeaders = { ...requestConfig.headers };
+                        delete newHeaders[key];
+                        setRequestConfig({ ...requestConfig, headers: newHeaders });
+                      }}
+                    >
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
