@@ -2,6 +2,7 @@
 export { Sidebar } from './Sidebar';
 export { RequestBuilder } from './RequestBuilder';
 export { ResponseViewer } from './ResponseViewer';
+export { ExecutionHistory } from './ExecutionHistory';
 
 // Code Editor & Syntax
 export { AdvancedCodeEditor } from './AdvancedCodeEditor';

@@ -79,6 +79,8 @@ export const Executions=async(req,res)=>{
             console.log("Saved execution:", execution.toObject());
             return res.status(200).json({
                 success: true,
+                executionId: execution._id,
+
                 execution,
                 response: {
                     status: response.status,

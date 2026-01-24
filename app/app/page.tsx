@@ -26,8 +26,9 @@ export default function FluxApp() {
           .catch(err => console.error('Failed to create workspace:', err));
       }
     }, [router]);
-  const [activeTab, setActiveTab] = useState<'collections' | 'history'>('collections');
-  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [activeTab, setActiveTab] = useState<'collections' | 'history' | 'executions'>('collections');
+  const [selectedRequest, setSelectedRequest] = useState<any>(null);
+  const [selectedExecutionId, setSelectedExecutionId] = useState<string | undefined>(undefined);
   const [requestConfig, setRequestConfig] = useState({
     method: 'GET',
     url: '',
@@ -36,9 +37,9 @@ export default function FluxApp() {
     body: '',
     auth: { type: 'none' },
   });
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const [previousResponse, setPreviousResponse] = useState(null);
+  const [previousResponse, setPreviousResponse] = useState<any>(null);
 
   const handleSendRequest = useCallback(async () => {
     if (!requestConfig.url) {
@@ -68,6 +69,9 @@ export default function FluxApp() {
       
       const executionResult = await executeRequest(savedRequest._id);
       
+      // Store the request and execution IDs for execution history
+      setSelectedRequest(savedRequest);
+      
       setResponse({
         status: executionResult.response.status,
         statusText: executionResult.execution.state,
@@ -78,6 +82,9 @@ export default function FluxApp() {
         size: new Blob([JSON.stringify(executionResult.response.body)]).size,
         time: executionResult.response.latency,
       });
+
+      // Auto-switch to executions tab to show the new execution
+      setActiveTab('executions');
     } catch (error) {
       const duration = Date.now() - startTime;
       setResponse({
@@ -100,10 +107,23 @@ export default function FluxApp() {
     router.replace('/home');
   };
 
+  const handleSelectExecution = (executionId: string) => {
+    setSelectedExecutionId(executionId);
+    console.log('Selected execution:', executionId);
+    // Here you could fetch the execution details and display them in the ResponseViewer
+  };
+
   return (
     <>
       <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Sidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab}
+          currentRequestId={selectedRequest?._id}
+          onSelectExecution={handleSelectExecution}
+          selectedExecutionId={selectedExecutionId}
+          userId={user?._id}
+        />
         <RequestBuilder
           requestConfig={requestConfig}
           setRequestConfig={setRequestConfig}
