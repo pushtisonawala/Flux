@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getUser, logout } from '@/lib/auth';
+import { createWorkspace, createRequest, executeRequest } from '@/lib/api';
 import { Sidebar } from '@/components/flux/Sidebar';
 import { RequestBuilder } from '@/components/flux/RequestBuilder';
 import { ResponseViewer } from '@/components/flux/ResponseViewer';
@@ -11,6 +12,7 @@ import { KeyboardShortcuts } from '@/components/flux/KeyboardShortcuts';
 export default function FluxApp() {
     const router = useRouter();
     const [user, setUser] = useState<any>(null);
+    const [workspace, setWorkspace] = useState<any>(null);
 
     useEffect(() => {
       const u = getUser();
@@ -18,6 +20,10 @@ export default function FluxApp() {
         router.replace('/home');
       } else {
         setUser(u);
+        // Create a default workspace for the user
+        createWorkspace('My Workspace', u._id)
+          .then(ws => setWorkspace(ws))
+          .catch(err => console.error('Failed to create workspace:', err));
       }
     }, [router]);
   const [activeTab, setActiveTab] = useState<'collections' | 'history'>('collections');
@@ -40,26 +46,38 @@ export default function FluxApp() {
       return;
     }
 
+    if (!workspace || !user) {
+      alert('Workspace or user not available');
+      return;
+    }
+
     setLoading(true);
     const startTime = Date.now();
     try {
-      setPreviousResponse(response);
-      const res = await fetch(requestConfig.url, {
+      // Save the request to the backend first
+      const savedRequest = await createRequest(workspace._id, {
+        folder_name: 'Default',
+        url: requestConfig.url,
         method: requestConfig.method,
-        headers: requestConfig.headers,
-        body: requestConfig.method !== 'GET' && requestConfig.method !== 'HEAD' ? requestConfig.body : undefined,
+        headers: requestConfig.headers || {},
+        body: requestConfig.body || '{}',
+        user_id: user._id,
       });
 
-      const text = await res.text();
-      const duration = Date.now() - startTime;
+      setPreviousResponse(response);
+      
+      // Execute the request through backend
+      const executionResult = await executeRequest(savedRequest._id);
       
       setResponse({
-        status: res.status,
-        statusText: res.statusText,
-        headers: Object.fromEntries(res.headers.entries()),
-        body: text,
-        size: new Blob([text]).size,
-        time: duration,
+        status: executionResult.response.status,
+        statusText: executionResult.execution.state,
+        headers: executionResult.response.headers || {},
+        body: typeof executionResult.response.body === 'string' 
+          ? executionResult.response.body 
+          : JSON.stringify(executionResult.response.body, null, 2),
+        size: new Blob([JSON.stringify(executionResult.response.body)]).size,
+        time: executionResult.response.latency,
       });
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -74,7 +92,7 @@ export default function FluxApp() {
     } finally {
       setLoading(false);
     }
-  }, [requestConfig, response]);
+  }, [requestConfig, response, workspace, user]);
 
   if (!user) return null;
 
