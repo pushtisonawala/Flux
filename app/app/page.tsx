@@ -66,7 +66,6 @@ export default function FluxApp() {
 
       setPreviousResponse(response);
       
-      // Execute the request through backend
       const executionResult = await executeRequest(savedRequest._id);
       
       setResponse({
