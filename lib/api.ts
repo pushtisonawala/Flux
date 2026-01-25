@@ -62,3 +62,15 @@ export async function executeRequest(requestId: string) {
   return data;
 }
 
+export async function getExecutionDetails(executionId: string) {
+  const res = await fetch(`${API_BASE}/api/executions/${executionId}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const data = await res.json();
+  if (!res.ok || !data.success) {
+    throw new Error(data.message || 'Failed to get execution details');
+  }
+  return data.execution;
+}
+

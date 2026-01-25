@@ -113,3 +113,38 @@ export const Executions=async(req,res)=>{
         });
     }
 }
+
+// Get a single execution by ID
+export const getExecutionById = async (req, res) => {
+    try {
+        const { executionId } = req.params;
+        
+        if (!executionId) {
+            return res.status(400).json({
+                success: false,
+                message: "executionId is required"
+            });
+        }
+
+        const execution = await Execution.findById(executionId);
+        
+        if (!execution) {
+            return res.status(404).json({
+                success: false,
+                message: "Execution not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            execution: execution
+        });
+    } catch (error) {
+        console.error("Error fetching execution:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch execution",
+            error: error.message
+        });
+    }
+}

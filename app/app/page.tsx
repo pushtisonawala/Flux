@@ -7,6 +7,7 @@ import { createWorkspace, createRequest, executeRequest } from '@/lib/api';
 import { Sidebar } from '@/components/flux/Sidebar';
 import { RequestBuilder } from '@/components/flux/RequestBuilder';
 import { ResponseViewer } from '@/components/flux/ResponseViewer';
+import { ExecutionResponseViewer } from '@/components/flux/ExecutionResponseViewer';
 import { KeyboardShortcuts } from '@/components/flux/KeyboardShortcuts';
 
 export default function FluxApp() {
@@ -110,7 +111,15 @@ export default function FluxApp() {
   const handleSelectExecution = (executionId: string) => {
     setSelectedExecutionId(executionId);
     console.log('Selected execution:', executionId);
-    // Here you could fetch the execution details and display them in the ResponseViewer
+  };
+
+  const handleCloseExecutionViewer = () => {
+    setSelectedExecutionId(undefined);
+  };
+
+  const handleSelectRequest = (requestId: string) => {
+    setSelectedRequest({ _id: requestId });
+    console.log('Selected request:', requestId);
   };
 
   return (
@@ -120,6 +129,7 @@ export default function FluxApp() {
           activeTab={activeTab} 
           setActiveTab={setActiveTab}
           currentRequestId={selectedRequest?._id}
+          onSelectRequest={handleSelectRequest}
           onSelectExecution={handleSelectExecution}
           selectedExecutionId={selectedExecutionId}
           userId={user?._id}
@@ -130,11 +140,18 @@ export default function FluxApp() {
           onSend={handleSendRequest}
           loading={loading}
         />
-        <ResponseViewer 
-          response={response} 
-          previousResponse={previousResponse}
-          loading={loading}
-        />
+        {selectedExecutionId ? (
+          <ExecutionResponseViewer 
+            executionId={selectedExecutionId}
+            onClose={handleCloseExecutionViewer}
+          />
+        ) : (
+          <ResponseViewer 
+            response={response} 
+            previousResponse={previousResponse}
+            loading={loading}
+          />
+        )}
         <button onClick={handleLogout} className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded">Logout</button>
       </div>
       <KeyboardShortcuts onSend={handleSendRequest} />

@@ -26,6 +26,7 @@ interface SidebarProps {
   activeTab: 'collections' | 'history' | 'executions';
   setActiveTab: (tab: 'collections' | 'history' | 'executions') => void;
   currentRequestId?: string;
+  onSelectRequest?: (requestId: string) => void;
   onSelectExecution?: (executionId: string) => void;
   selectedExecutionId?: string;
   userId?: string;
@@ -35,6 +36,7 @@ export function Sidebar({
   activeTab, 
   setActiveTab,
   currentRequestId,
+  onSelectRequest,
   onSelectExecution,
   selectedExecutionId,
   userId
@@ -275,6 +277,12 @@ export function Sidebar({
                 {history.map((item) => (
                   <button
                     key={item.id}
+                    onClick={() => {
+                      if (onSelectRequest) {
+                        onSelectRequest(item.requestId || item.id);
+                      }
+                      setActiveTab('executions');
+                    }}
                     className="w-full flex items-center gap-2 px-2 py-2 rounded text-xs text-sidebar-foreground/70 hover:bg-sidebar-accent/60 transition-colors group"
                   >
                     <span className={`font-mono text-xs font-bold w-10 ${getMethodColor(item.method)}`}>

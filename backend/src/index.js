@@ -6,7 +6,7 @@ import {connectDB} from "./db/mongo.js"
 import {createWorkspace} from "./controllers/workspaceControllers.js"
 import {signup, login} from "./controllers/userController.js";
 import {getReq,createReq,getRequestHistory} from "./controllers/requestController.js";
-import {Executions} from "./controllers/ExecutionController.js"
+import {Executions, getExecutionById} from "./controllers/ExecutionController.js"
 import {getExecutionHistory} from "./controllers/ExecutionHistoryController.js"
 const app=express()
 const httpServer=http.createServer(app)
@@ -45,8 +45,9 @@ app.get("/api/test-echo", (req, res) => {
     });
 });
 
-app.get("/api/:requestId/execution",Executions)
+app.get("/api/executions/:executionId", getExecutionById)
 app.get("/api/requests/:requestId/executions", getExecutionHistory)
+app.get("/api/:requestId/execution",Executions)
 app.get("/api/users/:userId/history", getRequestHistory)
 
 
